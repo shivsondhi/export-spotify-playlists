@@ -5,7 +5,7 @@ Control variables - [All are either global or in main()]
 	* CLI_ID and CLI_KEY	(string)
 	* overwrite 			(boolean)
 	* mode 					(string)
-	* playlist 				(string)
+	* playlist 				(list of strings)
 '''
 
 import spotipy

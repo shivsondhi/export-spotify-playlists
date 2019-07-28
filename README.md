@@ -41,5 +41,8 @@ Every function has a description in comments and explains what it does. You can 
 * Popularity
 * Duration in ms
 
+# Screenshot
+![The txt file](txtScreenshot.png)
+
 # Notes
 You will have to add your own client details and your own paths. Everything else can be as is.
