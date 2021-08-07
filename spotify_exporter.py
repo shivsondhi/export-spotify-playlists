@@ -41,28 +41,15 @@ def main():
 		"classical"				: ["37i9dQZF1DWWEJlAGA9gs0", "spotify"], 
 		"focus"					: ["37i9dQZF1DWZeKCadgRdKQ", "spotify"],
 		"edm"					: ["37i9dQZF1DX5Q27plkaOQ3", "spotify"],
-		"just"					: ["1MlVgfN4qPrG7cWQLhC4O9", "shivsondhi"],
 		"reggaton"				: ["3MQzcmwPwvpy2tdVbqy775", "pcnaimad"]}
 	playlist = playlists_info['hiphop']
 
-	# step 1 - get the token to get authorized by the spotify API
-	token = get_token()
-	spotify = spotipy.Spotify(auth=token)
+	# step 1 - get authorized by the spotify API
+	auth_manager = SpotifyClientCredentials(client_id=CLI_ID, client_secret=CLI_KEY)
+	spotify = spotipy.Spotify(auth_manager=auth_manager)
 	
 	# write playlist contents to file and other playlist-operations
 	write_playlist(playlist[1], playlist[0], mode)
-
-
-def get_token():
-	'''
-	Your client ID and client secret key are used to get a token. 
-	If both your credentials were legitimate, you will get and return a valid token. 
-	'''
-	credentials = oauth2.SpotifyClientCredentials(
-		client_id = CLI_ID, 
-		client_secret = CLI_KEY)
-	token = credentials.get_access_token()
-	return token 
 
 
 def write_playlist(username, uri, mode):
@@ -73,6 +60,9 @@ def write_playlist(username, uri, mode):
 	'''
 	playlist_info = spotify.user_playlist(username, uri) 						#, fields='tracks,next,name'
 	tracks = playlist_info['tracks']
+	if tracks['total'] < 1:
+		print("Playlist is empty!")
+		return 
 	if mode == 'txt':
 		filename = "{0}.txt".format(playlist_info['name'])
 		old_total = write_txt(username, filename, tracks)
@@ -124,7 +114,7 @@ def write_txt(username, filename, tracks):
 		# write new songs to the file
 		while True:
 			for item in tracks['items']:
-				if 'track' in item:
+				if ('track' in item) and (item['track']):
 					track = item['track']
 				else:
 					track = item
@@ -169,7 +159,7 @@ def write_csv(filename, tracks):
 			print("Rewriting...")
 	while True:
 		for item in tracks['items']:
-			if 'track' in item:
+			if ('track' in item) and (item['track']):
 				track = item['track']
 			else:
 				track = item
@@ -180,16 +170,15 @@ def write_csv(filename, tracks):
 				tracklist.append(track_info)
 			except KeyError:
 				print("Skipping track (LOCAL ONLY) - {0} by {1}".format(track['name'], track['artists'][0]['name']))
+			except TypeError:
+				print("NoneType object detected.")
 		if tracks['next']:
 			tracks = spotify.next(tracks)
 		else:
 			break
-	with open(filepath, 'w', newline='') as file:
-		try:
-			writer = csv.writer(file)
-			writer.writerows(tracklist)
-		except UnicodeEncodeError:
-			print("Skipping track (UNDEFINED CHARACTERS) - {0} by {1}".format(track['name'], track['artists'][0]['name']))
+	with open(filepath, 'w', newline='', encoding='utf-8') as file:
+		writer = csv.writer(file)
+		writer.writerows(tracklist)
 	print("Playlist written to file.", end="\n\n")
 	print("-----\t\t\t-----\t\t\t-----\n")
 	return
