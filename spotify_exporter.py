@@ -9,7 +9,7 @@ Control variables - [All are either global or in main()]
 '''
 
 import spotipy
-import spotipy.oauth2 as oauth2
+from spotipy.oauth2 import SpotifyClientCredentials
 import random
 from pprint import pprint
 import csv
@@ -17,8 +17,8 @@ import os
 
 
 # client ID and secret key to authorize querying of spotify data through the API
-CLI_ID 	= # YOUR CLIENT ID
-CLI_KEY = # YOUR CLIENT SECRET
+CLI_ID 	= 'CLIENT_ID' # YOUR CLIENT ID
+CLI_KEY = 'CLIENT_KEY' # YOUR CLIENT SECRET
 
 
 # header row for csv file 
@@ -28,8 +28,6 @@ OVERWRITE = True
 
 
 def main():
-	global spotify
-
 	# Choose whether you want to export playlist to a txt file, csv file or if you just want to view the playlist data structure or get a random song. 
 	modes = ["txt", "csv", "show_ds", "nan"]
 	mode = modes[0]
@@ -44,20 +42,25 @@ def main():
 		"reggaton"				: ["3MQzcmwPwvpy2tdVbqy775", "pcnaimad"]}
 	playlist = playlists_info['hiphop']
 
-	# step 1 - get authorized by the spotify API
-	auth_manager = SpotifyClientCredentials(client_id=CLI_ID, client_secret=CLI_KEY)
-	spotify = spotipy.Spotify(auth_manager=auth_manager)
-	
 	# write playlist contents to file and other playlist-operations
-	write_playlist(playlist[1], playlist[0], mode)
+	write_playlist(playlist[1], playlist[0], mode, cli_id=CLI_ID, cli_key=CLI_KEY)
 
 
-def write_playlist(username, uri, mode):
+def write_playlist(username, uri, mode, cli_id=None, cli_key=None, token=None):
 	'''
 	Query the spotify API and receive the playlist information. If mode is 'nan' you can view this information data structure in its raw form.
 	Obtain the list of tracks from the playlist information data structure and write it to a txt or csv file.
 	Select a random song from the list of tracks and print general information to the console. 
 	'''
+	global spotify
+
+	# step 1 - get authorized by the spotify API
+	if token:
+		spotify = spotipy.Spotify(auth=token)
+	else:
+		auth_manager = SpotifyClientCredentials(client_id=cli_id, client_secret=cli_key)
+		spotify = spotipy.Spotify(auth_manager=auth_manager)
+	
 	playlist_info = spotify.user_playlist(username, uri) 						#, fields='tracks,next,name'
 	tracks = playlist_info['tracks']
 	if tracks['total'] < 1:
