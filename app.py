@@ -1,13 +1,8 @@
 '''
 Spotify playlist exporter. 
 
-ToDo:
-	Frontend:
-		Remove extra horizontal scrolling. 
-		Add username field in form. 
-		Add connect to spotify token. 
-	Why don't session and cookies carry forward after redirect? Refresh/state verification. 
-	How to start file download? 
+CONTROL FLOW:
+/ > /login > /callback > /connected > /data
 '''
 
 
@@ -22,22 +17,22 @@ from flask import (
 	session,
 	abort, 
 )
-from spotipy_api import write_playlist
+from spotify_exporter import write_playlist
 import string 
 import secrets
 import requests
 from urllib.parse import urlencode
 
 
-CLI_ID 	= "CLIENT_ID" # Your client ID 
-CLI_KEY = "CLIENT KEY" # Your client key 
+CLI_ID 	= "CLIENT ID" # YOUR CLIENT ID 
+CLI_KEY = "CLIENT KEY" # YOUR CLIENT SECRET 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
 
 app = Flask(__name__)
-app.secret_key = 'secret' # Can be any random string 
+app.secret_key = 'selectARandomsecret_Key-forTheAPP'
 
 
 @app.route("/")
@@ -49,7 +44,7 @@ def home():
 def data():
 	if request.method == "GET":
 		return """The URL http://localhost:5000/data cannot be accessed directly. 
-		Try submitting the form at http://localhost:5000/ first."""
+		Try submitting the form at http://localhost:5000/connected first."""
 	if request.method == "POST":
 		form_data = request.form.to_dict(flat=False) 
 		# get playlist url 
@@ -59,11 +54,12 @@ def data():
 		mid = len("playlist/")
 		end = start + mid
 		playlist_uri = playlist_url[end:end+uri_len] 
+		# get username
+		user = form_data['name'][0]
 		if "text" in form_data.keys():
 			write_playlist(user, playlist_uri, "txt", token=session.get('tokens').get('access_token')) 
 		elif "csv" in form_data.keys():
 			write_playlist(user, playlist_uri, "csv", token=session.get('tokens').get('access_token')) 
-		# .... get file and download ....
 		return render_template("data.html")
 
 
@@ -81,7 +77,7 @@ def login():
 		'scope': scope
 	}
 	res = make_response(redirect(f'{AUTH_URL}/?{urlencode(payload)}'))
-	res.set_cookie('spotify_auth_state', state)
+	res.set_cookie('spotify_auth_state', state, samesite="Strict")
 	return res
 
 
@@ -91,12 +87,6 @@ def callback():
 	code = request.args.get('code')
 	state = request.args.get('state')
 	stored_state = request.cookies.get('spotify_auth_state')
-
-	# check state 
-	# if state is None or state != stored_state:
-	# 	app.logger.error('Error message: {}'.format(repr(error)))
-	# 	app.logger.error('State mismatch: {} != {}'.format(stored_state, state))
-	# 	abort(400)
 	
 	# request token's payload 
 	payload = {
@@ -119,12 +109,14 @@ def callback():
 		'access_token': res_data.get('access_token'),
 		'refresh_token': res_data.get('refresh_token'),
 	}
+	session.modified = True 
 
 	return redirect(url_for('connected'))
 
 
 @app.route('/refresh')
 def refresh():
+	print(session)
 	payload = {
 		'grant_type': 'refresh_token',
 		'refresh_token': session.get('tokens').get('refresh_token'),

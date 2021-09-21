@@ -54,7 +54,9 @@ Every function has a description in comments and explains what it does. You can 
 # Screenshots
 ![The txt file](txtScreenshot.png)
 
-![The web page](webappScreenshot.png)
+![The web page - 1](webappScreenshot-1.png)
+
+![The web page - 2](webappScreenshot-2.png)
 
 # Notes
 You will have to add your own client details and your own paths. If you use `spotify_exporter.py` directly, update this information in the `main()` function of the script. If you use the Flask web app, update this information in `app.py`. Everything else can be left as is.

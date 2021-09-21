@@ -13,37 +13,23 @@
 			</div>
 			<hr>
 			<div id="body">
-				<span class="left">
-					<form method="POST" action="/data">
-						<label for="playurl">Playlist URL</label>
-						<input type="text" name="url" id="playurl" placeholder="Enter url">
-
-						<input type="submit" name="text" value="Text"/>
-						<input type="submit" name="csv" value="CSV"/>
-					</form>
-				</span>
-				<span class="right">
+				<div id="buttons">
 					<!-- <button onClick="window.open('http://localhost:5000/login', '_blank', '_top');"> -->
 					<button onClick="window.location.href='http://localhost:5000/login';">
 						Connect Spotify Account
 					</button>
-				</span>
+				</div>
 			</div>
 			<hr>
 			<div id="footer">
 				<h3>Instructions</h3>
 				<ul id="instructions">
-					<li>Get the playlist link from Spotify and enter it into the form 
-					above. 
+					<li>Login to your Spotify account.
+					<li>Enter the playlist owner's username and the playlist link 
+						into the form. 
 					<li>Select Text to export the playlist data to .txt format. 
 					<li>Select CSV to export the data to .csv format. 
 				</ul>
-				<p id="connectac">
-					Public playlists can be exported automatically. To export
-					a private playlist, sign into your Spotify account before 
-					exporting the playlist data. Make sure that the connected 
-					account is the owner of the private playlist.
-				</p>
 			</div>
 		</div>
 	</body>

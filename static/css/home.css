@@ -28,61 +28,22 @@ hr {
 
 
 
-/* form  */
-form {
-	text-align: center;
-}
-
-label {
-	font-size: 35px;
-	color: #2a7421;
-	font-weight: bold;
-}
-
-label+input {
-	margin: 2% 30% 1% 25%;
-}
-
-input[name='url'] {
-	width: 50%;
-	height: 30px;
-	padding: 5px;
-	box-sizing: border-box;
-	border-radius: 4px;
-}
-
-#playurl {
-	font-size: 25px;
-	color: #638f30;
-	text-align: center;
-}
-
-input[type=submit] {
-	width: 7%;
-	height: 30px;
-	background-color: #a4d4ae;
-	border: 2px solid #a4d4ae;
-	border-radius: 7px;
-}
-
-input[type=submit]:hover {
-	background-color: #4caf60;
-	color: white;
-}
-
-
 
 /* connect */
+#buttons {
+	text-align: center;
+}
+
 button {
 	border: 2px solid #a4d4ae;
 	background-color: #a4d4ae;
 	border-radius: 10px;
 	padding: 15px 30px;
-	margin: 5% 35% 5% 43%;
+	margin: 20px 0 20px 10px;
 	text-align: center;
-	font-size: 15px;
+	font-size: 14.5px;
 	display: inline-block;
-	width: 14%;
+	width: 15%;
 }
 
 button:hover {

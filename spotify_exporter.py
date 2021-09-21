@@ -17,8 +17,8 @@ import os
 
 
 # client ID and secret key to authorize querying of spotify data through the API
-CLI_ID 	= 'CLIENT_ID' # YOUR CLIENT ID
-CLI_KEY = 'CLIENT_KEY' # YOUR CLIENT SECRET
+CLI_ID 	= 'CLIENT ID' # YOUR CLIENT ID
+CLI_KEY = 'CLIENT KEY' # YOUR CLIENT SECRET
 
 
 # header row for csv file 
@@ -56,33 +56,48 @@ def write_playlist(username, uri, mode, cli_id=None, cli_key=None, token=None):
 
 	# step 1 - get authorized by the spotify API
 	if token:
+		webapp = True
 		spotify = spotipy.Spotify(auth=token)
 	else:
+		webapp = False
 		auth_manager = SpotifyClientCredentials(client_id=cli_id, client_secret=cli_key)
 		spotify = spotipy.Spotify(auth_manager=auth_manager)
 	
 	playlist_info = spotify.user_playlist(username, uri) 						#, fields='tracks,next,name'
 	tracks = playlist_info['tracks']
 	if tracks['total'] < 1:
-		print("Playlist is empty!")
-		return 
+		if token:
+			# RETURN EMPTY PLAYLIST MESSAGE 
+			print("Playlist is empty!")
+		else:
+			print("Playlist is empty!")
+			return 
 	if mode == 'txt':
 		filename = "{0}.txt".format(playlist_info['name'])
-		old_total = write_txt(username, filename, tracks)
+		old_total = write_txt(username, filename, tracks, webapp)
 	elif mode == 'csv':
 		filename = "{0}.csv".format(playlist_info['name'])
-		old_total = write_csv(filename, tracks)
+		old_total = write_csv(filename, tracks, webapp)
 	elif mode == 'show_ds':
 		pprint(playlist_info)
 	elif mode == 'nan':
 		pass
-	# print randomly selected song! 
+	# randomly select song 
 	song = random.choice(tracks['items'])
-	print("Number of tracks = {} --> {} ".format(old_total, tracks['total']))
-	print("Randomly selected song for you - {0} by {1}\n".format(song['track']['name'], song['track']['artists'][0]['name']))
+	if token:
+		# RETURN NUM OF TRACKS AND RANDOM SONG TO FRONTEND 
+		# RETURN FILE OBJECT OR WHATEVER 
+		pass
+	else:
+		print("Number of tracks = {} --> {} ".format(
+			old_total, tracks['total'])
+		)
+		print("Randomly selected song for you - {0} by {1}\n".format(
+			song['track']['name'], song['track']['artists'][0]['name'])
+		)
 
 
-def write_txt(username, filename, tracks):
+def write_txt(username, filename, tracks, webapp):
 	'''
 	ADD TO TXT FILE
 	View the playlist information data structure if this is confusing! 
@@ -93,7 +108,13 @@ def write_txt(username, filename, tracks):
 	Return the original number of songs to the calling function. 
 	Exceptions handle the cases where the characters in the track info cannot be understood by the system and where the key is invalid (usually due to local files in the playlist).
 	'''
-	filepath = "C:\\path\\to\\the\\directory\\{0}".format(filename)
+	if webapp:
+		parent_path = "Saved Data\\Text\\"
+		if not os.path.exists(parent_path):
+			os.makedirs(parent_path)
+		filepath = parent_path + filename
+	else:
+		filepath = "C:\\path\\to\\the\\directory\\{0}".format(filename)
 	if os.path.isfile(filepath):
 		print("File already exists!")
 		ex = True
@@ -141,7 +162,7 @@ def write_txt(username, filename, tracks):
 	return curr_tot
 
 
-def write_csv(filename, tracks):
+def write_csv(filename, tracks, webapp):
 	'''
 	ADD TO CSV FILE
 	View the playlist information data structure if this is confusing! 
@@ -151,7 +172,13 @@ def write_csv(filename, tracks):
 	Write the data to the csv file!
 	Exceptions handle the cases where the characters in the track info cannot be understood by the system and where the key is invalid (usually due to local files in the playlist).
 	'''
-	filepath = "C:\\path\\to\\the\\directory\\{0}".format(filename)
+	if webapp:
+		parent_path = "Saved Data\\CSV\\"
+		if not os.path.exists(parent_path):
+			os.makedirs(parent_path)
+		filepath = parent_path + filename
+	else:
+		filepath = "C:\\path\\to\\the\\directory\\{0}".format(filename)
 	tracklist = []
 	tracklist.append(csv_headers)
 	if os.path.isfile(filepath):

@@ -37,25 +37,24 @@ label {
 	font-size: 35px;
 	color: #2a7421;
 	font-weight: bold;
+	margin-right: 15px;
 }
 
-label+input {
-	margin: 2% 30% 1% 25%;
-}
-
-input[name='url'] {
-	width: 50%;
+#form input {
+	display: inline-block;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	height: 30px;
-	padding: 5px;
+	padding: 5px 5px;
+}
+
+input[type=text] {
+	width: 50%;
 	box-sizing: border-box;
 	border-radius: 4px;
 }
 
-#playurl {
-	font-size: 25px;
-	color: #638f30;
-	text-align: center;
-}
 
 input[type=submit] {
 	width: 7%;
@@ -73,17 +72,34 @@ input[type=submit]:hover {
 
 
 /* connect */
+#buttons {
+	text-align: center;
+}
+
 button {
 	border: 2px solid #a4d4ae;
-	background-color: #4caf60;
-	color: white;
 	border-radius: 10px;
 	padding: 15px 30px;
-	margin: 5% 35% 5% 43%;
+	margin: 20px 0 20px 10px;
 	text-align: center;
-	font-size: 15px;
+	font-size: 14.5px;
 	display: inline-block;
-	width: 14%;
+	width: 15%;
+}
+
+#connected {
+	background-color: #4caf60;
+	color: white;
+}
+
+#refresh {
+	background-color: #a4d4ae;
+	color: black;
+}
+
+#refresh:hover {
+	background-color: #4caf60;
+	color: white;
 }
 
 

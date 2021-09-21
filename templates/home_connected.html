@@ -3,7 +3,7 @@
 	<head>
 		<title>Export Spotify Playlists</title>
 		<link rel='stylesheet' href="{{ url_for('static', filename='css/home_connected.css') }}"> 
-		<!-- {{ url_for('static', filename='css/home.css') }} -->
+		<!-- {{ url_for('static', filename='css/home_connected.css') }} -->
 	</head>
 	
 	<body>
@@ -13,38 +13,40 @@
 			</div>
 			<hr>
 			<div id="body">
-				<span class="left">
+				<div id="form">
 					<form method="POST" action="/data">
-						<label for="playurl">Playlist URL</label>
-						<input type="text" name="url" id="playurl" placeholder="Enter url">
+						<div>
+							<label for="username">Spotify Username:</label>
+							<input type="text" name="name" id="username" placeholder="Enter username">
+						</div>
 
-						<input type="submit" name="text" value="Text"/>
-						<input type="submit" name="csv" value="CSV"/>
+						<div>
+							<label for="playurl">Playlist URL:</label>
+							<input type="text" name="url" id="playurl" placeholder="Enter url">
+						</div>
+
+						<div>
+							<input type="submit" name="text" value="Text"/>
+							<input type="submit" name="csv" value="CSV"/>
+						</div>
 					</form>
-				</span>
-				<span class="left">
+				</div>
+				<div id="buttons">
 					<!-- onClick="window.open('http://localhost:5000/login', '_blank', '_top');" -->
-					<button>Connected</button>
-				</span>
-				<span class="right">
-					<button onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
-				</span>
+					<button id="connected">Connected</button>
+					<button id="refresh" onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
+				</div>
 			</div>
 			<hr>
 			<div id="footer">
 				<h3>Instructions</h3>
 				<ul id="instructions">
-					<li>Get the playlist link from Spotify and enter it into the form 
-					above. 
+					<li>Login to your Spotify account.
+					<li>Enter the playlist owner's username and the playlist link 
+						into the form. 
 					<li>Select Text to export the playlist data to .txt format. 
 					<li>Select CSV to export the data to .csv format. 
 				</ul>
-				<p id="connectac">
-					Public playlists can be exported automatically. To export
-					a private playlist, sign into your Spotify account before 
-					exporting the playlist data. Make sure that the connected 
-					account is the owner of the private playlist.
-				</p>
 			</div>
 		</div>
 	</body>
