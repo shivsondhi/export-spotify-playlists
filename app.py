@@ -16,6 +16,9 @@ from flask import (
 	make_response,
 	session,
 	abort, 
+	send_file, 
+	send_from_directory, 
+	send_file, 
 )
 from spotify_exporter import write_playlist
 import string 
@@ -54,13 +57,19 @@ def data():
 		mid = len("playlist/")
 		end = start + mid
 		playlist_uri = playlist_url[end:end+uri_len] 
-		# get username
 		user = form_data['name'][0]
 		if "text" in form_data.keys():
-			write_playlist(user, playlist_uri, "txt", token=session.get('tokens').get('access_token')) 
+			filename = write_playlist(user, playlist_uri, "txt", token=session.get('tokens').get('access_token')) 
 		elif "csv" in form_data.keys():
-			write_playlist(user, playlist_uri, "csv", token=session.get('tokens').get('access_token')) 
-		return render_template("data.html")
+			filename = write_playlist(user, playlist_uri, "csv", token=session.get('tokens').get('access_token')) 
+		# set download path, set download link on data.html, save_file() 
+		return render_template("data.html", filename=filename)
+
+
+@app.route('/download/<filename>', methods=['POST', 'GET'])
+def download(filename): 
+	# return send_from_directory('Saved Data', filename)
+	return send_file('Saved Data\\'+filename, as_attachment=True)
 
 
 @app.route("/login")
@@ -87,6 +96,12 @@ def callback():
 	code = request.args.get('code')
 	state = request.args.get('state')
 	stored_state = request.cookies.get('spotify_auth_state')
+
+	# check state 
+	# if state is None or state != stored_state:
+	# 	app.logger.error('Error message: {}'.format(repr(error)))
+	# 	app.logger.error('State mismatch: {} != {}'.format(stored_state, state))
+	# 	abort(400)
 	
 	# request token's payload 
 	payload = {

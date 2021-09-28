@@ -5,7 +5,7 @@ Control variables - [All are either global or in main()]
 	* CLI_ID and CLI_KEY	(string)
 	* overwrite 			(boolean)
 	* mode 					(string)
-	* playlist 				(list of strings)
+	* playlist				(list of strings)
 '''
 
 import spotipy
@@ -66,7 +66,7 @@ def write_playlist(username, uri, mode, cli_id=None, cli_key=None, token=None):
 	playlist_info = spotify.user_playlist(username, uri) 						#, fields='tracks,next,name'
 	tracks = playlist_info['tracks']
 	if tracks['total'] < 1:
-		if token:
+		if webapp:
 			# RETURN EMPTY PLAYLIST MESSAGE 
 			print("Playlist is empty!")
 		else:
@@ -77,17 +77,16 @@ def write_playlist(username, uri, mode, cli_id=None, cli_key=None, token=None):
 		old_total = write_txt(username, filename, tracks, webapp)
 	elif mode == 'csv':
 		filename = "{0}.csv".format(playlist_info['name'])
-		old_total = write_csv(filename, tracks, webapp)
+		old_total = write_csv(filename, tracks, webapp) 
 	elif mode == 'show_ds':
 		pprint(playlist_info)
 	elif mode == 'nan':
 		pass
 	# randomly select song 
 	song = random.choice(tracks['items'])
-	if token:
-		# RETURN NUM OF TRACKS AND RANDOM SONG TO FRONTEND 
-		# RETURN FILE OBJECT OR WHATEVER 
-		pass
+	if webapp:
+		# return filename to Flask 
+		return filename 
 	else:
 		print("Number of tracks = {} --> {} ".format(
 			old_total, tracks['total'])
@@ -109,7 +108,7 @@ def write_txt(username, filename, tracks, webapp):
 	Exceptions handle the cases where the characters in the track info cannot be understood by the system and where the key is invalid (usually due to local files in the playlist).
 	'''
 	if webapp:
-		parent_path = "Saved Data\\Text\\"
+		parent_path = "Saved Data\\"
 		if not os.path.exists(parent_path):
 			os.makedirs(parent_path)
 		filepath = parent_path + filename
@@ -173,7 +172,7 @@ def write_csv(filename, tracks, webapp):
 	Exceptions handle the cases where the characters in the track info cannot be understood by the system and where the key is invalid (usually due to local files in the playlist).
 	'''
 	if webapp:
-		parent_path = "Saved Data\\CSV\\"
+		parent_path = "Saved Data\\"
 		if not os.path.exists(parent_path):
 			os.makedirs(parent_path)
 		filepath = parent_path + filename
@@ -211,7 +210,7 @@ def write_csv(filename, tracks, webapp):
 		writer.writerows(tracklist)
 	print("Playlist written to file.", end="\n\n")
 	print("-----\t\t\t-----\t\t\t-----\n")
-	return
+	return len(tracklist)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,69 @@
+/* header */
+html, body {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	width: 100%;
+	background: #f7f1bc;
+}
+
+#container {
+	min-height: 100%;
+	position: relative;
+}
+
+#header {
+	padding: 25px;
+}
+
+h1 {
+	color: #1f6416;
+	text-align: center;
+	font-size: 75px;
+}
+
+hr {
+	border-top: 3px solid #647e4e;
+}
+
+
+
+
+/* body */
+#body {
+	text-align: center;
+	padding: 0 0 50px 0;
+}
+
+#download {
+	margin: 35px 0 100px 0;
+}
+
+h2 {
+	color: #1f6416;
+	font-size: 50px;
+} 
+
+a {
+	color: #1f6416;
+	font-size: 40px;
+}
+
+a:hover {
+	color: #1a9ab1;
+}
+
+
+
+/* footer */
+h3 {
+	color: #647e4e;
+	margin: 1% 0 0 2%;
+	font-size: 30px;
+}
+
+#instructions {
+	margin: 1% 0 1% 1%;
+	font-size: 17px;
+	padding: 0 0 20px 20px;
+}
