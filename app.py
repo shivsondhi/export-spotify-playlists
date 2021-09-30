@@ -151,7 +151,10 @@ def refresh():
 @app.route('/connected')
 def connected():
 	token = session.get('tokens').get('access_token')
-	return render_template("home_connected.html") 
+	if token:
+		return render_template("home_connected.html") 
+	else:
+		return render_template("home.html")
 
 
 if __name__ == "__main__":
