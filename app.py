@@ -8,7 +8,7 @@ CONTROL FLOW:
 
 from flask import (
 	Flask, 
-	render_template, 
+	render_template,   
 	request, 
 	url_for, 
 	flash, 
@@ -27,8 +27,9 @@ import requests
 from urllib.parse import urlencode
 
 
-CLI_ID 	= "CLIENT ID" # YOUR CLIENT ID 
-CLI_KEY = "CLIENT KEY" # YOUR CLIENT SECRET 
+
+CLI_ID 	= "a4514ed21d5c4f6c822d961f08ffbcef" # YOUR CLIENT ID 
+CLI_KEY = "e7fdc773a9c44aa0b14ecb5342bbb3ac" # YOUR CLIENT SECRET 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -45,6 +46,8 @@ def home():
 
 @app.route("/data", methods={"GET", "POST"})
 def data():
+	print("Request method", request.method)
+
 	if request.method == "GET":
 		return """The URL http://localhost:5000/data cannot be accessed directly. 
 		Try submitting the form at http://localhost:5000/connected first."""
@@ -58,16 +61,19 @@ def data():
 		end = start + mid
 		playlist_uri = playlist_url[end:end+uri_len] 
 		user = form_data['name'][0]
+		print('User and playlist URI: ', user, playlist_uri)
 		if "text" in form_data.keys():
 			filename = write_playlist(user, playlist_uri, "txt", token=session.get('tokens').get('access_token')) 
 		elif "csv" in form_data.keys():
 			filename = write_playlist(user, playlist_uri, "csv", token=session.get('tokens').get('access_token')) 
-		# set download path, set download link on data.html, save_file() 
+		# set download path, set download link on data.html, save_file()
+		print(filename) 
 		return render_template("data.html", filename=filename)
 
 
 @app.route('/download/<filename>', methods=['POST', 'GET'])
 def download(filename): 
+	print(f"Download route" + {filename})
 	# return send_from_directory('Saved Data', filename)
 	return send_file('Saved Data\\'+filename, as_attachment=True)
 
