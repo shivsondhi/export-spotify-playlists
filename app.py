@@ -128,7 +128,7 @@ def callback():
 
 @app.route('/refresh')
 def refresh():
-	print(session)
+	# TO DO: session tokens is not returning anything
 	payload = {
 		'grant_type': 'refresh_token',
 		'refresh_token': session.get('tokens').get('refresh_token'),
@@ -141,8 +141,9 @@ def refresh():
 	res_data = res.json()
 	# load new tokens into session
 	session['tokens']['access_token'] = res_data.get('access_token')
-	
-	return json.dumps(session['tokens'])
+	# return json.dumps(session['tokens'])
+
+	return redirect(url_for('connected'))
 
 
 @app.route('/connected')
