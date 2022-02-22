@@ -11,7 +11,6 @@
 			<div id="header">
 				<h1>Export Spotify Playlists</h1>
 			</div>
-			<hr>
 			<div id="body">
 				<div id="form">
 					<form method="POST" action="/data">
@@ -22,21 +21,19 @@
 
 						<div>
 							<label for="playurl">Playlist URL:</label>
-							<input type="text" name="url" id="playurl" placeholder="Enter url">
+							<input type="text" name="url" id="playurl" placeholder="Enter playlist url">
 						</div>
 
 						<div>
-							<input type="submit" name="tsv" value="TSV"/>
+							<input type="submit" name="tsv" value="Export as TSV"/>
 						</div>
 					</form>
 				</div>
 				<div id="buttons">
-					<!-- onClick="window.open('http://localhost:5000/login', '_blank', '_top');" -->
-					<button id="connected">Connected</button>
+					<button id="connected" pointer-events="none">Connected</button>
 					<button id="refresh" onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
 				</div>
 			</div>
-			<hr>
 			<div id="footer">
 				<h3>Instructions</h3>
 				<ul id="instructions">

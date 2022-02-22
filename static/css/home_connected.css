@@ -4,7 +4,8 @@ html, body {
 	padding: 0px;
 	height: 100%;
 	width: 100%;
-	background: #f7f1bc;
+	background: white;
+	font-family: 'arial';
 }
 
 #container {
@@ -17,16 +18,10 @@ html, body {
 }
 
 h1 {
-	color: #1f6416;
+	color: black;
 	text-align: center;
-	font-size: 75px;
+	font-size: 30px;
 }
-
-hr {
-	border-top: 3px solid #647e4e;
-}
-
-
 
 /* form  */
 form {
@@ -34,8 +29,8 @@ form {
 }
 
 label {
-	font-size: 35px;
-	color: #2a7421;
+	font-size: 20px;
+	color: black;
 	font-weight: bold;
 	margin-right: 15px;
 }
@@ -50,14 +45,13 @@ label {
 }
 
 input[type=text] {
-	width: 50%;
+	width: 30%;
 	box-sizing: border-box;
 	border-radius: 4px;
 }
 
 
 input[type=submit] {
-	width: 7%;
 	height: 30px;
 	background-color: #a4d4ae;
 	border: 2px solid #a4d4ae;
@@ -77,14 +71,12 @@ input[type=submit]:hover {
 }
 
 button {
-	border: 2px solid #a4d4ae;
-	border-radius: 10px;
-	padding: 15px 30px;
 	margin: 20px 0 20px 10px;
 	text-align: center;
-	font-size: 14.5px;
-	display: inline-block;
-	width: 15%;
+	height: 30px;
+	background-color: #a4d4ae;
+	border: 2px solid #a4d4ae;
+	border-radius: 7px;
 }
 
 #connected {
@@ -106,9 +98,9 @@ button {
 
 /* footer */
 h3 {
-	color: #647e4e;
+	color: black;
 	margin: 1% 0 0 2%;
-	font-size: 30px;
+	font-size: 20px;
 }
 
 #instructions {
