@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Export Spotify Playlists</title>
-		<link rel='stylesheet' href="{{ url_for('static', filename='css/home_connected.css') }}"> 
+		<link rel='stylesheet' href="{{ url_for('static', filename='css/home.css') }}"> 
 		<!-- {{ url_for('static', filename='css/home_connected.css') }} -->
 	</head>
 	
@@ -11,10 +11,9 @@
 			<div id="header">
 				<h1>Export Spotify Playlists</h1>
 			</div>
-			<hr>
 			<div id="body">
 				<div id="form">
-					<form method="POST" action="/data">
+					<form method="POST" action="/export">
 						<div>
 							<label for="username">Spotify Username:</label>
 							<input type="text" name="name" id="username" placeholder="Enter username">
@@ -22,30 +21,26 @@
 
 						<div>
 							<label for="playurl">Playlist URL:</label>
-							<input type="text" name="url" id="playurl" placeholder="Enter url">
+							<input type="text" name="url" id="playurl" placeholder="Enter playlist url">
 						</div>
 
 						<div>
-							<input type="submit" name="text" value="Text"/>
-							<input type="submit" name="csv" value="CSV"/>
+							<input type="submit" name="tsv" value="Export as TSV" download/>
 						</div>
 					</form>
 				</div>
 				<div id="buttons">
-					<!-- onClick="window.open('http://localhost:5000/login', '_blank', '_top');" -->
-					<button id="connected">Connected</button>
+					<button id="connected" pointer-events="none">Connected</button>
 					<button id="refresh" onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
 				</div>
 			</div>
-			<hr>
 			<div id="footer">
 				<h3>Instructions</h3>
 				<ul id="instructions">
 					<li>Login to your Spotify account.
 					<li>Enter the playlist owner's username and the playlist link 
 						into the form. 
-					<li>Select Text to export the playlist data to .txt format. 
-					<li>Select CSV to export the data to .csv format. 
+					<li>Select TSV to export the data to .tsv format. 
 				</ul>
 			</div>
 		</div>
