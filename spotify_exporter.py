@@ -86,29 +86,5 @@ def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 
 
 def write_tsv_file(filename, playlist_df, webapp):
-	'''
-	ADD TO TSV FILE
-	View the playlist information data structure if this is confusing! 
-	Specify the destination file path and check if the file exists already. If the file exists and you selected to not overwrite, the program will end here.
-	Traverse the tracks data structure and add whatever information you want to store to a python list. These are the rows for your csv file
-	Append all of these lists to a main python list which will store all the rows for your tsv file.
-	Write the data to the tsv file!
-	Exceptions handle the cases where the characters in the track info cannot be understood by the system and where the key is invalid (usually due to local files in the playlist).
-	'''
-	# if webapp:
-	# 	parent_path = "Saved Data\\"
-	# 	if not os.path.exists(parent_path):
-	# 		os.makedirs(parent_path)
-	# 	filepath = parent_path + filename
-	# else:
-	# 	filepath = "C:\\path\\to\\the\\directory\\{0}".format(filename)
-
-	# if os.path.isfile(filepath):
-	# 	print("File already exists!")
-	# 	if not OVERWRITE:
-	# 		return
-	# 	else:
-	# 		print("Rewriting...")
-
 	# Filename is in tsv format so will download as tsv
 	return playlist_df.to_csv(filename, index=False, sep="\t")
