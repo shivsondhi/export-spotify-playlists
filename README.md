@@ -14,10 +14,8 @@ The premise of the program is pretty obvious. This application lets you save you
 ## Libraries used
 I have used the following libraries for various purposes in the script : 
 * Spotipy - Install using `pip install spotipy`
-* Pprint - Install using `pip install pprint`
 * CSV module
 * OS module
-* Random module
 
 The Flask app uses the following libraries :
 * Flask 
