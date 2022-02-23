@@ -1,5 +1,5 @@
 # Export Spotify Playlists
-Export Spotify playlist data to either Text or CSV files using Spotipy and the WebAPI.
+Export Spotify playlist data to TSV file using Spotipy and the WebAPI.
 
 # Implementation Details
 The application is written almost completely in python and I have used the recommended python library for the Spotify WebAPI - Spotipy. The library makes working with the WebAPI easier than if you used the python `requests` library directly. You can either run `spotify_exporter.py` directly or you can run `app.py`, open `http://localhost:5000` in your browser and follow along with the web app. The Flask app uses `spotify_exporter.py` and lets you login to your spotify account to export your playlists from the web app. Output is written as TSV (.tsv) file. 
