@@ -2,9 +2,8 @@
 Spotify playlist exporter. 
 
 CONTROL FLOW:
-/ > /login > /callback > /connected > /data
+/ > /login > /callback > /connected
 '''
-
 
 from flask import (
 	Flask, 
@@ -17,23 +16,21 @@ from flask import (
 	session,
 	abort, 
 	send_file, 
-	send_from_directory, 
-	send_file, 
 )
-from spotify_exporter import write_playlist
+from spotify_exporter import build_playlist
 import string 
 import secrets
 import requests
 from urllib.parse import urlencode
+from dotenv import load_dotenv   #for python-dotenv method
+load_dotenv()                    #for python-dotenv method
+import os 
 
-
-
-CLI_ID 	= "a4514ed21d5c4f6c822d961f08ffbcef" # YOUR CLIENT ID 
-CLI_KEY = "e7fdc773a9c44aa0b14ecb5342bbb3ac" # YOUR CLIENT SECRET 
+CLI_ID 	= os.environ.get('CLI_ID') # CLIENT ID 
+CLI_KEY = os.environ.get('CLI_KEY') # CLIENT SECRET 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
-
 
 app = Flask(__name__)
 app.secret_key = 'selectARandomsecret_Key-forTheAPP'
@@ -44,38 +41,29 @@ def home():
 	return render_template("home.html") 
 
 
-@app.route("/data", methods={"GET", "POST"})
-def data():
+@app.route("/export", methods={"GET", "POST"})
+def export():
 	print("Request method", request.method)
 
 	if request.method == "GET":
-		return """The URL http://localhost:5000/data cannot be accessed directly. 
+		return """The URL http://localhost:5000/export cannot be accessed directly. 
 		Try submitting the form at http://localhost:5000/connected first."""
 	if request.method == "POST":
-		form_data = request.form.to_dict(flat=False) 
-		# get playlist url 
-		uri_len = 22
+		# get form inputs
+		form_data = request.form.to_dict(flat=False)
+		user = form_data['name'][0]
 		playlist_url = form_data['url'][0]
+		# get playlist data 
+		uri_len = 22
 		start = playlist_url.find("playlist")
 		mid = len("playlist/")
 		end = start + mid
 		playlist_uri = playlist_url[end:end+uri_len] 
-		user = form_data['name'][0]
-		print('User and playlist URI: ', user, playlist_uri)
-		if "text" in form_data.keys():
-			filename = write_playlist(user, playlist_uri, "txt", token=session.get('tokens').get('access_token')) 
-		elif "csv" in form_data.keys():
-			filename = write_playlist(user, playlist_uri, "csv", token=session.get('tokens').get('access_token')) 
-		# set download path, set download link on data.html, save_file()
-		print(filename) 
-		return render_template("data.html", filename=filename)
 
-
-@app.route('/download/<filename>', methods=['POST', 'GET'])
-def download(filename): 
-	print(f"Download route" + {filename})
-	# return send_from_directory('Saved Data', filename)
-	return send_file('Saved Data\\'+filename, as_attachment=True)
+		# create tsv file
+		filename = build_playlist(user, playlist_uri, token=session.get('tokens').get('access_token')) 
+		# download file
+		return send_file(filename, as_attachment=True)
 
 
 @app.route("/login")
@@ -137,7 +125,7 @@ def callback():
 
 @app.route('/refresh')
 def refresh():
-	print(session)
+	# TO DO: session tokens is not returning anything
 	payload = {
 		'grant_type': 'refresh_token',
 		'refresh_token': session.get('tokens').get('refresh_token'),
@@ -150,8 +138,9 @@ def refresh():
 	res_data = res.json()
 	# load new tokens into session
 	session['tokens']['access_token'] = res_data.get('access_token')
-	
-	return json.dumps(session['tokens'])
+	# return json.dumps(session['tokens'])
+
+	return redirect(url_for('connected'))
 
 
 @app.route('/connected')

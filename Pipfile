@@ -8,6 +8,7 @@ flask = "*"
 spotipy = "*"
 pandas = "*"
 python-decouple = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
