@@ -41,29 +41,32 @@ def home():
 	return render_template("home.html") 
 
 
-@app.route("/export", methods={"GET", "POST"})
+@app.route("/export", methods={"POST"})
 def export():
-	print("Request method", request.method)
+	# get form inputs
+	form_data = request.form.to_dict(flat=False)
+	user = form_data['name'][0]
+	playlist_url = form_data['url'][0]
+	# get playlist data 
+	uri_len = 22
+	start = playlist_url.find("playlist")
+	mid = len("playlist/")
+	end = start + mid
+	playlist_uri = playlist_url[end:end+uri_len] 
 
-	if request.method == "GET":
-		return """The URL http://localhost:5000/export cannot be accessed directly. 
-		Try submitting the form at http://localhost:5000/connected first."""
-	if request.method == "POST":
-		# get form inputs
-		form_data = request.form.to_dict(flat=False)
-		user = form_data['name'][0]
-		playlist_url = form_data['url'][0]
-		# get playlist data 
-		uri_len = 22
-		start = playlist_url.find("playlist")
-		mid = len("playlist/")
-		end = start + mid
-		playlist_uri = playlist_url[end:end+uri_len] 
+	# create tsv file
+	filename = build_playlist(user, playlist_uri, token=session.get('tokens').get('access_token'))
 
-		# create tsv file
-		filename = build_playlist(user, playlist_uri, token=session.get('tokens').get('access_token')) 
-		# download file
-		return send_file(filename, as_attachment=True)
+	if filename == "error":
+		return render_template("home.html", value="reauthorize")
+
+	# prepare file export
+	file_export = send_file(filename, as_attachment=True)
+	# remove file from path as its no longer needed
+	os.remove(f"./{filename}")
+	# download file export
+	return file_export
+
 
 
 @app.route("/login")
@@ -86,16 +89,12 @@ def login():
 
 @app.route("/callback")
 def callback():
-	error = request.args.get('error')
 	code = request.args.get('code')
-	state = request.args.get('state')
-	stored_state = request.cookies.get('spotify_auth_state')
+	state = request.args.get('state') or None
 
 	# check state 
-	# if state is None or state != stored_state:
-	# 	app.logger.error('Error message: {}'.format(repr(error)))
-	# 	app.logger.error('State mismatch: {} != {}'.format(stored_state, state))
-	# 	abort(400)
+	if state is None:
+		return render_template("home.html", value="error")
 	
 	# request token's payload 
 	payload = {
@@ -125,10 +124,14 @@ def callback():
 
 @app.route('/refresh')
 def refresh():
-	# TO DO: session tokens is not returning anything
+	tokens = session.get('tokens') or None
+
+	if tokens is None:
+		return render_template("home.html", value="reauthorize")
+
 	payload = {
 		'grant_type': 'refresh_token',
-		'refresh_token': session.get('tokens').get('refresh_token'),
+		'refresh_token': tokens.get('refresh_token'),
 	}
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
@@ -138,7 +141,6 @@ def refresh():
 	res_data = res.json()
 	# load new tokens into session
 	session['tokens']['access_token'] = res_data.get('access_token')
-	# return json.dumps(session['tokens'])
 
 	return redirect(url_for('connected'))
 

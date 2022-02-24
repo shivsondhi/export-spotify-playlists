@@ -1,2 +1,4 @@
 .env
-.pyc
+*.pyc
+__pycache__
+*.tsv

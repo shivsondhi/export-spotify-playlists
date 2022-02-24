@@ -13,10 +13,15 @@
 			</div>
 			<div id="body">
 				<div id="buttons">
-					<!-- <button onClick="window.open('http://localhost:5000/login', '_blank', '_top');"> -->
 					<button onClick="window.location.href='http://localhost:5000/login';">
 						Connect to Spotify
 					</button>
+					{% if value == "error" %}
+					<div id="error">Error encountered while connecting to Spotify, please try again.</div>
+					{% endif %}
+					{% if value == "reauthorize" %}
+					<div id="error">Please reconnect to Spotify.</div>
+					{% endif %}
 				</div>
 			</div>
 			<div id="footer">

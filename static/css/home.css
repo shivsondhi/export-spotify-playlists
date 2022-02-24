@@ -104,6 +104,10 @@ button {
 	color: white;
 }
 
+#error {
+	color: red;
+	font-size: 14px;
+}
 
 
 /* footer */

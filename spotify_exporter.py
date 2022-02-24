@@ -15,7 +15,7 @@ CLI_ID 	= os.environ.get('CLI_ID') # CLIENT ID
 CLI_KEY = os.environ.get('CLI_KEY') # CLIENT SECRET 
 
 # header row for tsv file 
-tsv_headers = ["Artist","Album","TrackName", "Label"]
+tsv_headers = ["Name","Artist","Album","Label"]
 
 def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 	'''
@@ -23,7 +23,7 @@ def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 	Obtain the list of tracks from the playlist information data structure and write it to a txt or csv file.
 	Select a random song from the list of tracks and print general information to the console. 
 	'''
-	global spotify
+	global spotify, playlist_info
 	playlist_df = pd.DataFrame(columns = tsv_headers)
 	
 	# step 1 - get authorized by the spotify API
@@ -35,7 +35,11 @@ def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 		auth_manager = SpotifyClientCredentials(client_id=cli_id, client_secret=cli_key)
 		spotify = spotipy.Spotify(auth_manager=auth_manager)
 	
-	playlist_info = spotify.user_playlist_tracks(username, uri)["items"]					#, fields='tracks,next,name'
+	try:
+		playlist_info = spotify.user_playlist_tracks(username, uri)["items"]
+	except:
+		return "error"
+
 	playlist_name = spotify.user_playlist(username, uri, fields="name")
 
 	for track in playlist_info:
@@ -54,9 +58,9 @@ def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 		# Create empty dict
 		playlist_features = {}
 		# Get metadata
+		playlist_features["Name"] = track["track"]["name"]
 		playlist_features["Artist"] = track["track"]["album"]["artists"][0]["name"]
 		playlist_features["Album"] = track["track"]["album"]["name"]
-		playlist_features["TrackName"] = track["track"]["name"]
 		playlist_features["Label"] = album_label
 
 		# Removes leading/trailing whitespace
