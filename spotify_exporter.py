@@ -17,7 +17,38 @@ CLI_KEY = os.environ.get('CLI_KEY') # CLIENT SECRET
 # header row for tsv file 
 tsv_headers = ["Name","Artist","Album","Label"]
 
-def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
+def get_user_playlists (cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
+	global spotify, playlists, user
+	if token:
+		webapp = True
+		spotify = spotipy.Spotify(auth=token)
+	else:
+		webapp = False
+		auth_manager = SpotifyClientCredentials(client_id=cli_id, client_secret=cli_key)
+		spotify = spotipy.Spotify(auth_manager=auth_manager)
+	
+	try:
+		user = spotify.me()
+		user_id = user['id']
+		playlists = spotify.user_playlists(user_id)
+		playlist_data = []
+
+		for playlist in playlists['items']:
+			name = playlist['name']
+			uri = playlist['uri']
+			playlist_dict = {}
+			playlist_dict['name'] = name
+			playlist_dict['uri'] = uri
+			playlist_data.append(playlist_dict)
+		
+		dict = {}
+		dict['user'] = user
+		dict['playlists'] = playlist_data
+		return dict
+	except:
+		return "error"
+
+def build_playlist(uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 	'''
 	Query the spotify API and receive the playlist information. If mode is 'nan' you can view this information data structure in its raw form.
 	Obtain the list of tracks from the playlist information data structure and write it to a txt or csv file.
@@ -34,13 +65,13 @@ def build_playlist(username, uri, cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 		webapp = False
 		auth_manager = SpotifyClientCredentials(client_id=cli_id, client_secret=cli_key)
 		spotify = spotipy.Spotify(auth_manager=auth_manager)
-	
+
+	user = spotify.me()
 	try:
-		playlist_info = spotify.user_playlist_tracks(username, uri)["items"]
+		playlist_info = spotify.user_playlist_tracks(user['id'], uri)["items"]
 	except:
 		return "error"
-
-	playlist_name = spotify.user_playlist(username, uri, fields="name")
+	playlist_name = spotify.user_playlist(user['id'], uri, fields="name")
 
 	for track in playlist_info:
 		album_id = track["track"]["album"]["uri"]

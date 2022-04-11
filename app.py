@@ -17,14 +17,16 @@ from flask import (
 	abort, 
 	send_file, 
 )
-from spotify_exporter import build_playlist
+from flask_cors import CORS
+from spotify_exporter import build_playlist, get_user_playlists
 import string 
 import secrets
 import requests
 from urllib.parse import urlencode
 from dotenv import load_dotenv   #for python-dotenv method
 load_dotenv()                    #for python-dotenv method
-import os 
+import os
+
 
 CLI_ID 	= os.environ.get('CLI_ID') # CLIENT ID 
 CLI_KEY = os.environ.get('CLI_KEY') # CLIENT SECRET 
@@ -33,8 +35,15 @@ AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origin": "http://localhost:3000", "credentials": True }})
 app.secret_key = 'selectARandomsecret_Key-forTheAPP'
 
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 
 @app.route("/")
 def home():
@@ -45,17 +54,10 @@ def home():
 def export():
 	# get form inputs
 	form_data = request.form.to_dict(flat=False)
-	user = form_data['name'][0]
-	playlist_url = form_data['url'][0]
-	# get playlist data 
-	uri_len = 22
-	start = playlist_url.find("playlist")
-	mid = len("playlist/")
-	end = start + mid
-	playlist_uri = playlist_url[end:end+uri_len] 
+	uri = list(form_data.keys())
 
 	# create tsv file
-	filename = build_playlist(user, playlist_uri, token=session.get('tokens').get('access_token'))
+	filename = build_playlist(uri[0], token=session.get('tokens').get('access_token'))
 
 	if filename == "error":
 		return render_template("home.html", value="reauthorize")
@@ -74,13 +76,12 @@ def login():
 	state = ''.join(
 		secrets.choice(string.ascii_uppercase + string.digits) for _ in range(16)
 	)
-	scope = "playlist-read-private"
+	# scope = "playlist-read-private"
 	payload = {
 		'client_id': CLI_ID,
 		'response_type': 'code',
 		'redirect_uri': REDIRECT_URI,
-		'state': state,
-		'scope': scope
+		'state': state
 	}
 	res = make_response(redirect(f'{AUTH_URL}/?{urlencode(payload)}'))
 	res.set_cookie('spotify_auth_state', state, samesite="Strict")
@@ -141,15 +142,15 @@ def refresh():
 	res_data = res.json()
 	# load new tokens into session
 	session['tokens']['access_token'] = res_data.get('access_token')
-
 	return redirect(url_for('connected'))
 
 
-@app.route('/connected')
+@app.route('/connected', methods = ['GET'])
 def connected():
 	token = session.get('tokens').get('access_token')
 	if token:
-		return render_template("home_connected.html") 
+		data = get_user_playlists(token=session.get('tokens').get('access_token'))
+		return render_template("home_connected.html", user=data['user'], playlists=data['playlists'], token=token) 
 	else:
 		return render_template("home.html")
 

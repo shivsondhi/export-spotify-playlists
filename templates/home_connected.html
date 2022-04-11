@@ -12,23 +12,16 @@
 				<h1>Export Spotify Playlists</h1>
 			</div>
 			<div id="body">
-				<div id="form">
-					<form method="POST" action="/export">
-						<div>
-							<label for="username">Spotify Username:</label>
-							<input type="text" name="name" id="username" placeholder="Enter username">
-						</div>
-
-						<div>
-							<label for="playurl">Playlist URL:</label>
-							<input type="text" name="url" id="playurl" placeholder="Enter playlist url">
-						</div>
-
-						<div>
-							<input type="submit" name="tsv" value="Export as TSV" download/>
-						</div>
-					</form>
-				</div>
+				{% for playlist in playlists %}
+					<div id="playlist">{{playlist.name}}</div>
+					<div id="form">
+						<form method="POST" action="/export">
+							<div>
+								<input type="submit" name="{{playlist.uri}}" value="export" download/>
+							</div>
+						</form>
+					</div>
+				{% endfor %}
 				<div id="buttons">
 					<button id="connected" pointer-events="none">Connected</button>
 					<button id="refresh" onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
