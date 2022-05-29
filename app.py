@@ -74,12 +74,6 @@ def after_request(response):
 
 @app.route("/")
 def home():
-
-	token = session.get('tokens')
-	current_time = int( time.time() )
-	if (token and current_time < token.get('expires_at')):
-		return redirect(url_for('show_playlists'))
-	
 	return render_template("home.html") 
 
 
