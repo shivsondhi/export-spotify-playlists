@@ -34,17 +34,9 @@ def get_user_playlists (cli_id=CLI_ID, cli_key=CLI_KEY, token=None):
 		playlist_data = []
 
 		for playlist in playlists['items']:
-			name = playlist['name']
-			uri = playlist['uri']
-			playlist_dict = {}
-			playlist_dict['name'] = name
-			playlist_dict['uri'] = uri
-			playlist_data.append(playlist_dict)
-		
-		dict = {}
-		dict['user'] = user
-		dict['playlists'] = playlist_data
-		return dict
+			playlist_data.append({'name': playlist['name'], 'uri': playlist['uri']})
+
+		return {'user': user, 'playlists': playlist_data}
 	except:
 		return "error"
 

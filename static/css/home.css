@@ -1,16 +1,82 @@
 /* header */
-html, body {
+html {
 	margin: 0px;
 	padding: 0px;
 	height: 100%;
 	width: 100%;
-	background: white;
 	font-family: 'arial';
 }
 
-#container {
-	min-height: 100%;
-	position: relative;
+body {
+	background-image: url('img/record.jpg');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	-webkit-background-size: 100%; 
+	-moz-background-size: 100%; 
+	-o-background-size: 100%; 
+	background-size: 100%; 
+	-webkit-background-size: cover; 
+	-moz-background-size: cover; 
+	-o-background-size: cover; 
+	background-size: cover;
+}
+
+.box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10%;
+}
+
+.home-text {
+	flex-direction: row;
+	justify-content: center;
+	display: flex;
+	text-align: center;
+	padding-right: 15%;
+	padding-left: 15%;
+	padding-top: 2%;
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: larger;
+}
+
+.home-header {
+	font-family: sans-serif;
+	font-weight: 600;
+	flex-direction: row;
+	justify-content: center;
+	display: flex;
+	padding-right: 10%;
+	padding-left: 10%;
+	padding-top: 5%;
+	text-align: center;
+}
+
+
+.jumbotron {
+	background-color: white;
+	border-radius: 25px;
+	box-shadow: black 0px 10px 30px -10px;
+	width: 40%;
+}
+
+.spotify-btn-container {
+	flex-direction: row;
+	justify-content: center;
+	display: flex;
+	padding-top: 20px;
+	padding-bottom: 10px;
+}
+
+#spotify-btn {
+	border-color: #3ed087;
+	background-color: #3ed087;
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: larger;
+	border-radius: 25px;
 }
 
 #header {
@@ -28,55 +94,6 @@ h1 {
 	text-align: center;
 }
 
-/* form  */
-form {
-	text-align: center;
-}
-
-label {
-	font-size: 16px;
-	color: black;
-	font-weight: bold;
-	margin-right: 5px;
-}
-
-#form input {
-	display: inline-block;
-	margin: auto;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	height: 30px;
-	padding: 0px 10px 0px 10px;
-	font-size: 15px;
-}
-
-input[type=text] {
-	width: 30%;
-	box-sizing: border-box;
-	border-radius: 4px;
-	font-size: 15px;
-}
-
-
-input[type=submit] {
-	height: 30px;
-	background-color: #a4d4ae;
-	border: 2px solid #a4d4ae;
-	border-radius: 50px;
-}
-
-input[type=submit]:hover {
-	background-color: #4caf60;
-	color: white;
-}
-
-
-
-/* connect */
-#buttons {
-	text-align: center;
-}
-
 button {
 	margin: 20px 0 20px 10px;
 	text-align: center;
@@ -88,37 +105,60 @@ button {
 	font-size: 15px;
 }
 
-#connected {
-	background-color: #dadada;
-	border: none;
-	color: black;
-}
+#search-text {
+	background-image: url('img/search.png'); /* Add a search icon to input */
+	background-size: 20px 20px;
+	background-color: white;
+	background-position: 10px 12px; /* Position the search icon */
+	background-repeat: no-repeat; /* Do not repeat the icon image */
+	width: 60%; /* Full-width */
+	font-size: 18px; /* Increase font-size */
+	padding: 12px 12px 12px 40px; /* Add some padding */
+	border: 1px solid lightgray; /* Add a grey border */
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: larger;
+	margin-left: 20%;
+	margin-right: 20%;
+	margin-bottom: 5px;
+	border-radius: 10px;
+  }
+  
+  #playlist-table {
+	border-collapse: collapse; /* Collapse borders */
+	width: 80%; /* Full-width */
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: larger;
+	margin-left: 20%;
+	margin-right: 10%;
+	margin-bottom: 5%;
+	margin-top: 5%;
+  }
+  
+  #playlist-table th, #playlist-table td {
+	text-align: left; /* Left-align text */
+	padding: 5px; /* Add padding */
+  }
 
-#refresh {
-	background-color: #a4d4ae;
-	color: black;
-}
+  #export {
+	background-image: url('img/download.png'); /* Add a search icon to input */
+	background-size: 20px 20px;
+	background-color: white;
+	border-color: white;
+	background-repeat: no-repeat;
+	padding-bottom: 10;
+	padding-left: 20;
+  }
 
-#refresh:hover {
-	background-color: #4caf60;
-	color: white;
-}
+  #display-rows {
+	  font-weight: normal;
+	  font-size: x-small;
+	  color: blue;
+	  font-family: sans-serif;
+  }
 
-#error {
-	color: red;
-	font-size: 14px;
-}
-
-
-/* footer */
-h3 {
-	color: black;
-	margin: 1% 0 0 2%;
-	font-size: 16px;
-}
-
-#instructions {
-	margin: 1% 0 1% 1%;
-	font-size: 15px;
-	padding: 0 0 20px 20px;
-}
+  #header-playlist-name {
+	font-family: sans-serif;
+	font-size: larger
+  }

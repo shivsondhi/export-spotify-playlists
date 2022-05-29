@@ -1,41 +1,108 @@
-<!doctype html>
 <html>
 	<head>
 		<title>Export Spotify Playlists</title>
 		<link rel='stylesheet' href="{{ url_for('static', filename='css/home.css') }}"> 
-		<!-- {{ url_for('static', filename='css/home_connected.css') }} -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	</head>
 	
 	<body>
-		<div id="container">
-			<div id="header">
-				<h1>Export Spotify Playlists</h1>
-			</div>
-			<div id="body">
-				{% for playlist in playlists %}
-					<div id="playlist">{{playlist.name}}</div>
-					<div id="form">
-						<form method="POST" action="/export">
-							<div>
-								<input type="submit" name="{{playlist.uri}}" value="export" download/>
-							</div>
-						</form>
+		<div class="box">
+			<div class="jumbotron">
+				<h2 class="home-header">Spotify Playlist Export</h2>
+				<p class="home-text">Download TSV file with playlist track names, artists, albums, labels</p>
+				<input type="text" id="search-text" onkeyup="searchByPlaylist()" placeholder="Search by name">
+				<hr class="my-4">
+				<body>
+					<div id="body">
+						<table id="playlist-table">
+							<tr class="header">
+								<th id="header-playlist-name">Playlist Name</th>
+							</tr>
+							<tr><td><a id="display-rows" onclick="displayRows()"></a></td></tr>
+							{% for playlist in playlists %}
+								<tr>
+									<td><button type="submit" onclick="exportPlaylist(this.name)" id="export" name="{{playlist.uri}}:{{playlist.name.title()}}"></button>{{playlist.name.title()[:30]}}</td>
+								</tr>
+							{% endfor %}
+						</table>
 					</div>
-				{% endfor %}
-				<div id="buttons">
-					<button id="connected" pointer-events="none">Connected</button>
-					<button id="refresh" onClick="window.location.href='http://localhost:5000/refresh';">Refresh Token</button>
-				</div>
-			</div>
-			<div id="footer">
-				<h3>Instructions</h3>
-				<ul id="instructions">
-					<li>Login to your Spotify account.
-					<li>Enter the playlist owner's username and the playlist link 
-						into the form. 
-					<li>Select TSV to export the data to .tsv format. 
-				</ul>
-			</div>
-		</div>
-	</body>
+
+					<script>
+						function searchByPlaylist() {
+							// Declare variables
+							var input, filter, table, tr, td, i, txtValue;
+							input = document.getElementById("search-text");
+							filter = input.value.toUpperCase();
+							table = document.getElementById("playlist-table");
+							tr = table.getElementsByTagName("tr");
+							
+							if (!filter) {
+								const displayRows = document.getElementById("display-rows");
+								displayRows.innerHTML = 'Show Less'
+							}
+							// Loop through all table rows, and hide those who don’t match the search query
+							for (i = 0; i < tr.length; i++) {
+								td = tr[i].getElementsByTagName("td")[0];
+								if (td) {
+									txtValue = td.textContent || td.innerText;
+									if (txtValue.toUpperCase().indexOf(filter) > -1) {
+										tr[i].style.display = "";
+									} else {
+										tr[i].style.display = "none";
+									}
+								}
+							}
+						}
+
+						function exportPlaylist(playlistData) {
+							const playlist = playlistData.split(':')
+							const playlistUri = playlist[2];
+							const playlistName = playlist[3];
+							fetch(`/export/${playlist[2]}`)
+								.then(file => {
+									return file.blob()
+								})
+								.then(blob => {
+									const link = document.createElement("a");
+									link.href = window.URL.createObjectURL(blob);
+									link.download = playlistName;
+									link.click();
+									link.parentNode.removeChild(link);
+									window.URL.revokeObjectURL(blob);
+								})
+						}
+
+						function hideAllRows() {
+							const table = document.getElementById("playlist-table");
+							const rows = table.getElementsByTagName("tr");
+							const rowsArray = Array.from(rows)
+							for (const row of rowsArray.slice(7)) {
+								row.style.display = 'none'
+							}
+							const displayRows = document.getElementById("display-rows");
+							displayRows.innerHTML = 'Show More'
+						}
+						hideAllRows()
+
+						function displayRows() {
+							const table = document.getElementById("playlist-table");
+							const rows = table.getElementsByTagName("tr");
+							const rowsArray = Array.from(rows)
+							const displayRows = document.getElementById("display-rows");
+							const showAll = displayRows.innerHTML === 'Show More'
+							if (showAll) {
+								for (const row of rowsArray) {
+									row.style.display = 'inherit'
+								}
+								displayRows.innerHTML = 'Show Less'
+							} else {
+								hideAllRows()
+							}
+						};
+						</script>
+				</body>
+
 </html>
